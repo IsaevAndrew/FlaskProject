@@ -34,7 +34,8 @@
         {{item.job}}
     </div>
     <div class="col">
-        {{item.team_leader}}
+        {% set b = user[loop.index]%}
+        {{b.name + " " + b.surname}}
     </div>
     <div class="col">
         {% set a = (dt - item.start_date).total_seconds() // 3600%}

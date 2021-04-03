@@ -4,20 +4,33 @@ from data.users import User
 from data.jobs import Jobs
 from data.register import RegisterForm
 import datetime
+from data.login import LoginForm
 from flask import Flask, url_for, render_template, redirect
+from flask_login import LoginManager, logout_user, login_required
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired
+from flask_login import login_user
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    db_sess = db_session.create_session()
+    return db_sess.query(User).get(user_id)
 
 
 @app.route('/')
 def main():
     db_sess = db_session.create_session()
     jobs = db_sess.query(Jobs).all()
-    return render_template("works.html", jobs=jobs, dt=datetime.datetime.now())
+    us = db_sess.query(User).all()
+    return render_template("works.html", jobs=jobs, dt=datetime.datetime.now(), user = us)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -47,12 +60,28 @@ def reqister():
     return render_template('register.html', title='Регистрация', form=form)
 
 
-@app.route('/login')
-def log():
-    return 'ALL RIGHT'
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).filter(User.email == form.email.data).first()
+        if user and user.check_password(form.password.data):
+            login_user(user, remember=form.remember_me.data)
+            return redirect("/")
+        return render_template('login.html',
+                               message="Неправильный логин или пароль",
+                               form=form)
+    return render_template('login.html', title='Авторизация', form=form)
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect("/")
 
 
 if __name__ == '__main__':
     db_session.global_init("db/mars_explorer.db")
     app.run(port=8080, host='127.0.0.1')
-

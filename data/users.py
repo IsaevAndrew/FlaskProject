@@ -1,4 +1,5 @@
 import sqlalchemy
+from flask_login import UserMixin
 from sqlalchemy import orm
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -8,9 +9,10 @@ from flask import Flask, url_for, render_template, redirect
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired
+from flask_login import UserMixin
 
 
-class User(SqlAlchemyBase):
+class User(SqlAlchemyBase, UserMixin):
     __tablename__ = 'users'
 
     id = sqlalchemy.Column(sqlalchemy.Integer,
@@ -33,4 +35,3 @@ class User(SqlAlchemyBase):
 
     def check_password(self, password):
         return check_password_hash(self.hashed_password, password)
-
