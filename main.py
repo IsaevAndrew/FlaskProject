@@ -15,7 +15,9 @@ app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 
 @app.route('/')
 def main():
-    return "HELLO"
+    db_sess = db_session.create_session()
+    jobs = db_sess.query(Jobs).all()
+    return render_template("works.html", jobs=jobs, dt=datetime.datetime.now())
 
 
 @app.route('/register', methods=['GET', 'POST'])

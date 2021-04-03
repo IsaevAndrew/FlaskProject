@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 xmlns="http://www.w3.org/1999/html">Works log</h1>
+<div class="item">
+{% for item in jobs%}
+<h2>Action #{{item.id}}</h2>
+
+    <div class="table">
+    <div class="row table-secondary align-items-center">
+
+                <div class="col-6">
+                Title of activity
+                </div>
+                <div class="col">
+                Team leader
+            </div>
+            <div class="col">
+                Duration
+            </div>
+
+
+                        <div class="col">
+                List of collaborators
+            </div>
+         <div class="col">
+                Is finished
+            </div>
+
+    </div>
+
+<div class="row table-secondary align-items-center purple">
+    <div class="col-6">
+        {{item.job}}
+    </div>
+    <div class="col">
+        {{item.team_leader}}
+    </div>
+    <div class="col">
+        {% set a = (dt - item.start_date).total_seconds() // 3600%}
+        {{a}} hours
+    </div>
+    <div class="col">
+        {{item.collaborators}}
+    </div>
+
+    {%if item.is_finished %}
+    <div class="col not-purple-1">
+        Is finished
+    </div>
+    {%else%}
+    <div class="col not-purple">
+        Is not finished
+    </div>
+    {%endif%}
+</div>
+    </div>
+
+
+{% endfor %}
+</div>
+{% endblock %}
