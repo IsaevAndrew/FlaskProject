@@ -4,14 +4,11 @@ from data.users import User
 from data.jobs import Jobs
 from data.register import RegisterForm
 import datetime
+from forms.work import WorksForm
 from data.login import LoginForm
 from flask import Flask, url_for, render_template, redirect
 from flask_login import LoginManager, logout_user, login_required
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import DataRequired
-from flask_login import login_user
-
+from flask_login import login_user, current_user
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -30,7 +27,7 @@ def main():
     db_sess = db_session.create_session()
     jobs = db_sess.query(Jobs).all()
     us = db_sess.query(User).all()
-    return render_template("works.html", jobs=jobs, dt=datetime.datetime.now(), user = us)
+    return render_template("works.html", jobs=jobs, user=us)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -80,6 +77,25 @@ def login():
 def logout():
     logout_user()
     return redirect("/")
+
+@app.route('/addjob',  methods=['GET', 'POST'])
+@login_required
+def add_jobs():
+    form = WorksForm()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        jobs = Jobs()
+        jobs.team_leader = form.content2.data
+        jobs.job = form.content1.data
+        jobs.work_size = form.content3.data
+        jobs.collaborators = form.content4.data
+        jobs.is_finished = form.content5.data
+        current_user.jobs.append(jobs)
+        db_sess.merge(current_user)
+        db_sess.commit()
+        return redirect('/')
+    return render_template('addj.html', title='Добавление работы',
+                           form=form)
 
 
 if __name__ == '__main__':
