@@ -37,8 +37,10 @@
         {{item.job}}
     </div>
     <div class="col">
-        {% set b = user[loop.index]%}
-        {{b.name + " " + b.surname}}
+        {{user[item.team_leader-1].name}}
+        {{user[item.team_leader-1].surname}}
+
+
     </div>
     <div class="col">
         {{item.work_size}} hours
@@ -57,6 +59,16 @@
     </div>
     {%endif%}
 </div>
+    {% if current_user.is_authenticated and current_user == item.user %}
+    <div>
+        <a href="/jobs/{{ item.id }}" class="btn btn-warning">
+            Изменить
+        </a>
+        <a href="/jobs_delete/{{ item.id }}" class="btn btn-danger">
+            Удалить
+        </a>
+    </div>
+{% endif %}
     </div>
 
 

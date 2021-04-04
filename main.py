@@ -1,4 +1,6 @@
-from flask import Flask, render_template, redirect
+from flask import Flask, render_template, redirect, request
+from werkzeug.exceptions import abort
+
 from data import db_session
 from data.users import User
 from data.jobs import Jobs
@@ -26,7 +28,10 @@ def load_user(user_id):
 def main():
     db_sess = db_session.create_session()
     jobs = db_sess.query(Jobs).all()
+    print(jobs)
+
     us = db_sess.query(User).all()
+    print(us)
     return render_template("works.html", jobs=jobs, user=us)
 
 
@@ -97,6 +102,63 @@ def add_jobs():
     return render_template('addj.html', title='Добавление работы',
                            form=form)
 
+@app.route('/jobs/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_news(id):
+    form = WorksForm()
+    if request.method == "GET":
+        db_sess = db_session.create_session()
+        print(current_user)
+        if current_user.id == 1:
+            jobs = db_sess.query(Jobs).first()
+        else:
+            jobs = db_sess.query(Jobs).filter(Jobs.id == id,
+                                              Jobs.user == current_user
+                                              ).first()
+        if jobs:
+            form.content2.data = jobs.team_leader
+            form.content1.data = jobs.job
+            form.content3.data = jobs.work_size
+            form.content4.data = jobs.collaborators
+            form.content5.data = jobs.is_finished
+        else:
+            abort(404)
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        jobs = db_sess.query(Jobs).filter(Jobs.id == id,
+                                          Jobs.user == current_user
+                                          ).first()
+        if jobs:
+            jobs.team_leader = form.content2.data
+            jobs.job = form.content1.data
+            jobs.work_size = form.content3.data
+            jobs.collaborators = form.content4.data
+            jobs.is_finished = form.content5.data
+            #current_user.jobs.append(jobs)
+            db_sess.commit()
+            return redirect('/')
+        else:
+            abort(404)
+    print(4)
+    return render_template('addj.html',
+                           title='Редактирование новости',
+                           form=form
+                           )
+
+
+@app.route('/jobs_delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def news_delete(id):
+    db_sess = db_session.create_session()
+    jobs = db_sess.query(Jobs).filter(Jobs.id == id,
+                                      Jobs.user == current_user
+                                      ).first()
+    if jobs:
+        db_sess.delete(jobs)
+        db_sess.commit()
+    else:
+        abort(404)
+    return redirect('/')
 
 if __name__ == '__main__':
     db_session.global_init("db/mars_explorer.db")
