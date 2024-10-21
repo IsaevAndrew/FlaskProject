@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="item">
+    {% if current_user.is_authenticated %}
+    <a href="addbook" class="btn btn-success" title="Добавить книгу"><i class="fas fa-plus"> Книгу</i></a>
+    <a href="addavtor" class="btn btn-success" title="Добавить автора"><i class="fas fa-plus"> Автора</i></a>
+    <a href="/Mybooks" class="btn btn-primary">Мои книги</a>
+    <a href="/Myopinions" class="btn btn-primary">Мои отзывы</a>
+    <a href="/Mylist" class="btn btn-warning">Мои избранные книги</a>
+    {% endif %}
+</div>
+{% endblock %}

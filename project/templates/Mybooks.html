@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid" style="margin:50px;">
+        <div class="row" >
+
+
+        <div class="card-columns">
+            {% for item in books %}
+            {% if current_user.is_authenticated and current_user.id == item.creator%}
+            <div class="card" style="width: 18rem;">
+                    <img class="card-img-top" src="../static/img/{{item.name_foto}}" alt="Card image cap">
+                    <div class="card-body">
+                    <h5 class="card-title">{{item.title}}</h5>
+                    <p class="card-text">{{avtors[item.id_avt - 1].name}} {{avtors[item.id_avt - 1].surname}}</p>
+
+                    </div>
+            <div class="card-footer">
+                <a href="/opinions/{{ item.id }}" class="btn btn-primary" title="Смотреть отзывы">
+                <i class="far fa-eye"> Отзывы</i>
+            </a>
+                <a href="/book_delete/{{ item.id }}" class="btn btn-danger" title="Удалить книгу">
+                <i class="fas fa-trash-alt"> Книгу</i>
+            </a>
+                {% if current_user.is_authenticated and item.id not in a%}
+                <a href="/addopinion/{{ item.id }}" class="btn btn-success" title="Добавить отзывы">
+                    <i class="fas fa-plus"> Отзыв</i>
+
+            </a>
+        {%endif%}
+
+            </div>
+            </div>
+        {%endif%}
+        {% endfor %}
+          </div>
+        </div>
+    </div>
+
+{% endblock %}

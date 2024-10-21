@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 style="color: yellow">Adding a Avtor</h1>
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+    <p style="color: white">
+        {{ form.content1.label }}<br>
+        {{ form.content1(class="form-control") }}<br>
+        {% for error in form.content1.errors %}
+            <p content="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+    <p style="color: white">
+        {{ form.content2.label }}<br>
+        {{ form.content2(class="form-control") }}<br>
+        {% for error in form.content2.errors %}
+            <p content="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+    <p style="color: white">{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+    {{message}}
+</form>
+{% endblock %}

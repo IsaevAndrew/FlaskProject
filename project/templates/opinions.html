@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 style="color: #ffd700">Отзывы o произведении {{ name }}</h2>
+<div class="item">
+    {% for item in opinions%}
+    <h2 style="color: white">Отзыв от пользователя {{users[item.id_user - 1].name}} {{users[item.id_user - 1].surname}}</h2>
+    <h3 style="color: white; border: 2px double white;">{{item.opinion}}</h3>
+    <h1></h1>
+    </div>
+    {% endfor %}
+
+</div>
+{% endblock %}
